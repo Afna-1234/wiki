@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wikipedia — Redesigned</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0F1B2D;
+    --navy-mid: #1A2D44;
+    --amber: #E8A020;
+    --amber-light: #F5C15A;
+    --cream: #F8F6F1;
+    --white: #FFFFFF;
+    --slate: #4A5568;
+    --slate-light: #718096;
+    --border: #E2D9CC;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    border: 2px solid var(--amber);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amber);
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 700; letter-spacing: -1px;
+  }
+
+  .logo-text {
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+  }
+  .logo-text span { color: var(--amber); }
+
+  .nav-search {
+    flex: 1; max-width: 420px;
+    margin: 0 2rem; position: relative;
+  }
+
+  .nav-search input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; padding: 7px 14px 7px 36px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .nav-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .nav-search input:focus { border-color: var(--amber); }
+
+  .search-icon {
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,0.4); font-size: 15px; pointer-events: none;
+  }
+
+  .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+  .nav-links a {
+    color: rgba(255,255,255,0.65); text-decoration: none;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--amber); }
+
+  .nav-lang {
+    color: var(--amber); font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid var(--amber); padding: 4px 10px; border-radius: 3px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .nav-lang:hover { background: var(--amber); color: var(--navy); }
+
+  /* CATEGORY BAR */
+  .category-bar {
+    background: var(--white);
+    border-bottom: 2px solid var(--navy);
+    padding: 0 2rem;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+
+  .cat-item {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--slate); padding: 10px 18px;
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .cat-item:hover { color: var(--navy); }
+  .cat-item.active { color: var(--navy); border-bottom-color: var(--amber); }
+
+  /* HERO */
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 500px; background: var(--navy); overflow: hidden;
+  }
+
+  .hero-content {
+    padding: 3.5rem 3rem 3rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+
+  .tag-featured {
+    background: var(--amber); color: var(--navy);
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+  }
+
+  .tag-date { color: rgba(255,255,255,0.45); font-size: 11px; letter-spacing: 0.5px; }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1rem;
+  }
+  .hero-title em { color: var(--amber); font-style: italic; }
+
+  .hero-lead { color: rgba(255,255,255,0.65); font-size: 15px; line-height: 1.7; margin-bottom: 2rem; max-width: 400px; }
+
+  .hero-cta { display: flex; gap: 12px; align-items: center; }
+
+  .btn-primary {
+    background: var(--amber); color: var(--navy);
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    padding: 11px 24px; border: none; border-radius: 3px; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--amber-light); }
+
+  .btn-ghost {
+    color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; transition: color 0.2s;
+    background: none; border: none;
+  }
+  .btn-ghost:hover { color: var(--white); }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 2.5rem; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat-item .num {
+    color: var(--amber); font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 700; line-height: 1;
+  }
+  .stat-item .label {
+    color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.8px; text-transform: uppercase; margin-top: 4px;
+  }
+
+  .hero-image { position: relative; overflow: hidden; background: #1a2d44; }
+
+  .hero-image img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: brightness(0.75) saturate(0.85);
+  }
+
+  .hero-image-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--navy) 0%, transparent 40%);
+  }
+
+  .hero-image-caption {
+    position: absolute; bottom: 1rem; right: 1rem;
+    color: rgba(255,255,255,0.45); font-size: 10px; letter-spacing: 0.5px;
+  }
+
+  /* MAIN */
+  .main-wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+  .content-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 3rem;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--navy);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: ''; display: inline-block; width: 14px; height: 14px;
+    background: var(--amber); border-radius: 1px;
+  }
+
+  .section-more {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--slate-light); cursor: pointer; transition: color 0.2s;
+  }
+  .section-more:hover { color: var(--amber); }
+
+  /* ARTICLE CARDS */
+  .article-card {
+    display: grid; grid-template-columns: 1fr 110px; gap: 1.25rem;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .article-card:first-child { padding-top: 0; }
+  .article-card:last-child { border-bottom: none; }
+  .article-card:hover { opacity: 0.8; }
+  .article-card.no-image { grid-template-columns: 1fr; }
+
+  .article-category {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 6px;
+  }
+
+  .article-title {
+    font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700;
+    color: var(--navy); line-height: 1.3; margin-bottom: 6px;
+  }
+
+  .article-excerpt { color: var(--slate); font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+
+  .article-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--slate-light); }
+  .meta-dot { color: var(--border); }
+
+  .article-img { width: 110px; height: 85px; object-fit: cover; border-radius: 3px; display: block; }
+
+  .article-card-lg { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .article-card-lg img {
+    width: 100%; height: 240px; object-fit: cover;
+    border-radius: 4px; margin-bottom: 1rem; display: block;
+  }
+  .article-card-lg .article-title { font-size: 1.5rem; margin-bottom: 8px; }
+
+  /* SIDEBAR */
+  .sidebar-widget {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 4px; margin-bottom: 1.75rem; overflow: hidden;
+  }
+
+  .widget-header {
+    background: var(--navy); padding: 10px 16px;
+    font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700;
+    color: var(--white); letter-spacing: 0.3px;
+  }
+
+  .widget-body { padding: 1rem; }
+
+  .otd-date {
+    font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900;
+    color: var(--navy); line-height: 1; text-align: center; padding-top: 1rem;
+  }
+  .otd-month {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--amber); margin-top: 4px; margin-bottom: 1rem; text-align: center;
+  }
+  .otd-event {
+    font-size: 13px; color: var(--slate); line-height: 1.6;
+    border-left: 3px solid var(--amber); padding: 6px 12px; margin-bottom: 10px;
+  }
+  .otd-year { font-weight: 700; color: var(--navy); font-size: 12px; margin-bottom: 3px; }
+
+  /* Lang list */
+  .lang-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px; cursor: pointer; transition: color 0.15s;
+  }
+  .lang-row:last-child { border-bottom: none; }
+  .lang-row:hover .lang-name { color: var(--amber); }
+  .lang-name { color: var(--navy); font-weight: 500; }
+  .lang-count { color: var(--slate-light); font-size: 11px; }
+
+  .lang-bar-wrap { width: 60px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .lang-bar { height: 100%; background: var(--amber); border-radius: 2px; }
+
+  .picture-widget img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .picture-caption {
+    padding: 10px; font-size: 12px; color: var(--slate);
+    line-height: 1.5; font-style: italic; border-top: 1px solid var(--border);
+  }
+
+  /* TOPIC PILLS */
+  .topics-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+  .topic-pill {
+    background: var(--white); border: 1px solid var(--border); border-radius: 100px;
+    font-size: 12px; font-weight: 500; color: var(--navy); padding: 6px 16px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .topic-pill:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy); color: rgba(255,255,255,0.5);
+    padding: 2rem 3rem; margin-top: 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem; font-size: 12px;
+  }
+  .footer-brand { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); font-weight: 700; }
+  .footer-brand span { color: var(--amber); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 11px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">W</div>
+    <div class="logo-text">Wiki<span>pedia</span></div>
+  </div>
+  <div class="nav-search">
+    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search 62 million articles…">
+  </div>
+  <div class="nav-links">
+    <a href="#">Explore</a>
+    <a href="#">Random</a>
+    <a href="#">Contribute</a>
+    <div class="nav-lang">EN</div>
+  </div>
+</nav>
+
+<!-- CATEGORY BAR -->
+<div class="category-bar">
+  <div class="cat-item active">Today's Articles</div>
+  <div class="cat-item">Science</div>
+  <div class="cat-item">History</div>
+  <div class="cat-item">Geography</div>
+  <div class="cat-item">Arts</div>
+  <div class="cat-item">Technology</div>
+  <div class="cat-item">Society</div>
+  <div class="cat-item">Biography</div>
+  <div class="cat-item">Philosophy</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="tag-featured">Featured Article</span>
+      <span class="tag-date">June 28, 2026</span>
+    </div>
+    <h1 class="hero-title">The <em>Roman</em><br>Colosseum</h1>
+    <p class="hero-lead">An elliptical amphitheatre at the centre of Rome — the largest ancient amphitheatre ever built, and still the largest standing amphitheatre in the world today.</p>
+    <div class="hero-cta">
+      <button class="btn-primary">Read Full Article →</button>
+      <button class="btn-ghost">☆ Save to reading list</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="num">70K</div><div class="label">Capacity</div></div>
+      <div class="stat-item"><div class="num">80 AD</div><div class="label">Completed</div></div>
+      <div class="stat-item"><div class="num">6M+</div><div class="label">Visitors/yr</div></div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/1280px-Colosseo_2020.jpg" alt="The Roman Colosseum">
+    <div class="hero-image-overlay"></div>
+    <div class="hero-image-caption">Photo: Wikimedia Commons</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap">
+  <div class="content-grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">In The News</div>
+        <div class="section-more">View All →</div>
+      </div>
+
+      <div class="article-card-lg">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Aurora_Borealis_and_Australis_Seen_from_the_ISS.jpg/1280px-Aurora_Borealis_and_Australis_Seen_from_the_ISS.jpg" alt="Aurora">
+        <div class="article-category">Astronomy</div>
+        <div class="article-title">The Science Behind the Aurora Borealis</div>
+        <p class="article-excerpt">Solar wind particles colliding with atmospheric gases produce these breathtaking displays at the poles — a phenomenon that has fascinated humanity for millennia and science for centuries.</p>
+        <div class="article-meta">
+          <span>Natural phenomena</span><span class="meta-dot">·</span><span>12 min read</span><span class="meta-dot">·</span><span>Updated yesterday</span>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top: 1.5rem;">
+        <div class="section-title">Did You Know?</div>
+        <div class="section-more">More Facts →</div>
+      </div>
+
+      <div>
+        <div class="article-card">
+          <div>
+            <div class="article-category">Biology</div>
+            <div class="article-title">Mantis Shrimp Can See 16 Types of Color Receptors</div>
+            <p class="article-excerpt">Despite having more color receptors than any known animal, mantis shrimps may have poorer color discrimination than humans — their visual system optimizes for speed, not detail.</p>
+            <div class="article-meta"><span>Marine Biology</span><span class="meta-dot">·</span><span>8 min read</span></div>
+          </div>
+          <img class="article-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Mantis_shrimp_from_front.jpg/640px-Mantis_shrimp_from_front.jpg" alt="Mantis Shrimp">
+        </div>
+
+        <div class="article-card">
+          <div>
+            <div class="article-category">History</div>
+            <div class="article-title">The Library of Alexandria: What We Actually Know</div>
+            <p class="article-excerpt">Its destruction has been blamed on Julius Caesar, Theophilus, and Muslim conquerors alike. The historical reality is far more nuanced — and widely misunderstood.</p>
+            <div class="article-meta"><span>Ancient History</span><span class="meta-dot">·</span><span>11 min read</span></div>
+          </div>
+          <img class="article-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Ancientlibraryalex.jpg/640px-Ancientlibraryalex.jpg" alt="Library of Alexandria">
+        </div>
+
+        <div class="article-card">
+          <div>
+            <div class="article-category">Technology</div>
+            <div class="article-title">How the Transistor Changed the World</div>
+            <p class="article-excerpt">Invented in 1947, this tiny semiconductor device became the fundamental building block of modern electronics — enabling everything from early radios to today's supercomputers.</p>
+            <div class="article-meta"><span>Electronics</span><span class="meta-dot">·</span><span>9 min read</span></div>
+          </div>
+          <img class="article-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Transbud.jpg/640px-Transbud.jpg" alt="Transistor">
+        </div>
+
+        <div class="article-card no-image">
+          <div>
+            <div class="article-category">Philosophy</div>
+            <div class="article-title">The Ship of Theseus: Identity Through Change</div>
+            <p class="article-excerpt">If every plank of a ship is gradually replaced, is it still the same ship? This ancient paradox continues to challenge modern philosophy, psychology, and even legal theory about the nature of identity.</p>
+            <div class="article-meta"><span>Metaphysics</span><span class="meta-dot">·</span><span>7 min read</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <div class="section-header">
+          <div class="section-title">Browse by Topic</div>
+        </div>
+        <div class="topics-row">
+          <div class="topic-pill">Ancient Civilizations</div>
+          <div class="topic-pill">Quantum Physics</div>
+          <div class="topic-pill">World Wars</div>
+          <div class="topic-pill">Renaissance Art</div>
+          <div class="topic-pill">Human Anatomy</div>
+          <div class="topic-pill">Climate Science</div>
+          <div class="topic-pill">Philosophy of Mind</div>
+          <div class="topic-pill">Architecture</div>
+          <div class="topic-pill">Economics</div>
+          <div class="topic-pill">Mythology</div>
+          <div class="topic-pill">Space Exploration</div>
+          <div class="topic-pill">Linguistics</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside>
+
+      <div class="sidebar-widget">
+        <div class="widget-header">On This Day</div>
+        <div style="padding: 1rem;">
+          <div class="otd-date">28</div>
+          <div class="otd-month">June</div>
+          <div class="otd-event"><div class="otd-year">1914</div>Archduke Franz Ferdinand of Austria assassinated in Sarajevo, triggering World War I.</div>
+          <div class="otd-event"><div class="otd-year">1997</div>Mike Tyson bites off part of Evander Holyfield's ear during their WBA heavyweight rematch.</div>
+          <div class="otd-event"><div class="otd-year">2007</div>Apple Inc. releases the original iPhone in the United States.</div>
+        </div>
+      </div>
+
+      <div class="sidebar-widget picture-widget">
+        <div class="widget-header">Picture of the Day</div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camponotus_flavomarginatus_ant.jpg/640px-Camponotus_flavomarginatus_ant.jpg" alt="Ant macro">
+        <div class="picture-caption">A carpenter ant (<em>Camponotus flavomarginatus</em>) in extreme close-up, revealing extraordinary compound eyes and mandible detail. — Wikimedia Commons</div>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="widget-header">Wikipedia by Language</div>
+        <div class="widget-body">
+          <div class="lang-row"><span class="lang-name">English</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:100%"></div></div><span class="lang-count">6.8M articles</span></div>
+          <div class="lang-row"><span class="lang-name">Deutsch</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:39%"></div></div><span class="lang-count">2.7M articles</span></div>
+          <div class="lang-row"><span class="lang-name">Svenska</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:37%"></div></div><span class="lang-count">2.5M articles</span></div>
+          <div class="lang-row"><span class="lang-name">Français</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:33%"></div></div><span class="lang-count">2.4M articles</span></div>
+          <div class="lang-row"><span class="lang-name">日本語</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:22%"></div></div><span class="lang-count">1.5M articles</span></div>
+          <div class="lang-row"><span class="lang-name">Español</span><div class="lang-bar-wrap"><div class="lang-bar" style="width:28%"></div></div><span class="lang-count">1.9M articles</span></div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-brand">Wiki<span>pedia</span></div>
+    <div style="margin-top: 6px; font-size: 11px;">The Free Encyclopedia · A Wikimedia Foundation Project</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Contact Us</a>
+    <a href="#">Donate</a>
+    <a href="#">Developers</a>
+  </div>
+</footer>
+
+</body>
+</html>
